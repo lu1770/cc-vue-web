@@ -120,11 +120,12 @@ export default {
       function flattenDeep(arr1) {
         return (arr1 || []).reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
       }
+
       return flattenDeep([
         this.selected === "主机" ? "HardwareEquipmentComputerList" : "HardwareEquipmentProjectorList",
         "NetworkDeviceComputers",
         "NetworkDeviceProjectors"
-      ].map(k => this.areaListOptions.map(({value}) => value.ExhibitionItemList.map(item => item[k]))));
+      ].map(k => this.areaListOptions.map(({value}) => ((value || {}).ExhibitionItemList || []).map(item => item[k]))));
     },
     devices() {
       return Array.prototype.concat.apply(...[
@@ -288,11 +289,14 @@ export default {
     },
     onmessage({ws, args}) {
       // console.log(`onmessage ${this}`, args.data);
+      this.$success(JSON.stringify(args, undefined, 4))
     },
     onopen({ws, args}) {
-      /*        ws.send(`on open ${this} ${JSON.stringify(args)}`);
+      ws.send(`on open ${this} ${JSON.stringify(args)}`);
+      /*
               setInterval(() =>
                 this.ws.send("展现界面准备完毕"), 1000)*/
+      this.$success(args.data)
     },
     async reload() {
       this.areaListOptions = await this.$getData("/GetExhibitionAreaDropDownList");
@@ -300,6 +304,7 @@ export default {
       this.smile();
       this.doubleTriangles();
       this.cycles();
+      this.startWebSocket();
     }
   },
   mounted() {
