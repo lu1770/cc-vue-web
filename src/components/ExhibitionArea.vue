@@ -54,17 +54,16 @@
           ></canvas>
         </b-col>
         <b-col v-if="selected==='主机'||selected==='投影仪'">
-          <b-row v-for="device in deviceList">
-            <b-col>
-              <label :for="device.Name">{{ device.Name }}</label>
-            </b-col>
-            <b-col>
-              <b-button v-for="instruction in device.HardwareInstructionList"
-                        @click="exec({device, cmd:instruction})" variant="primary">
-                {{ instruction.InstructionName }}
-              </b-button>
-            </b-col>
-          </b-row>
+          <b-card>
+            <b-table striped hover :items="deviceList" :fields="[{key:'Name', label:'设备名称'},{key:'HardwareInstructionList', label:'指令列表'}]">
+              <template v-slot:cell(HardwareInstructionList)="data">
+                <b-button v-for="instruction in data.item.HardwareInstructionList"
+                          @click="exec({device, cmd:instruction})" variant="primary">
+                  {{ instruction.InstructionName }}
+                </b-button>
+              </template>
+            </b-table>
+          </b-card>
         </b-col>
         <div class="dialog" v-if="showLeft && currentItem">
           <b-button @click="showLeft=false" letiant="primary">X</b-button>
@@ -82,7 +81,7 @@
                     <label>{{ device.Name }}</label>
                   </b-col>
                   <b-col>
-                      <b-button-group>
+                    <b-button-group>
                       <b-button variant="primary" v-for="cmd in device.HardwareInstructionList"
                                 @click="exec({device, cmd})">
                         {{ cmd.InstructionName }}
