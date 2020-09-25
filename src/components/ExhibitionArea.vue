@@ -1,7 +1,7 @@
 <template>
   <div class="main-page">
     <b-navbar toggleable="lg" type="dark" variant="dark">
-      <b-link @click="$router.back()" class="back-button">
+      <b-link to="/nav/Home" class="back-button">
         <b-button letiant="default">返回</b-button>
       </b-link>
       <b-navbar-nav class="ml-auto">
@@ -82,7 +82,7 @@
                     <label>{{ device.Name }}</label>
                   </b-col>
                   <b-col>
-                    <b-button-group>
+                      <b-button-group>
                       <b-button variant="primary" v-for="cmd in device.HardwareInstructionList"
                                 @click="exec({device, cmd})">
                         {{ cmd.InstructionName }}
@@ -105,10 +105,16 @@
 <script>
 export default {
   name: "ExhibitionArea",
+  props: {
+    tab: {
+      type: String,
+      default: () => '展项'
+    }
+  },
   data() {
     return {
       down: false,
-      selected: '展项',
+      selected: this.$route.query.tab || '展项',
       showLeft: false,
       areaListOptions: [],
       currentArea: null,
