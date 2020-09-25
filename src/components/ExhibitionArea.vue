@@ -1,66 +1,53 @@
 <template>
   <div class="main-page">
-    <b-navbar toggleable="lg" type="dark" variant="dark">
-      <b-link to="/nav/Home" class="back-button">
-        <b-button letiant="default">返回</b-button>
-      </b-link>
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item-dropdown :text="(currentArea||{}).Name||'展区名称'" left>
-          <b-dropdown-item v-for="area in areaListOptions" @click="currentArea=area.value">{{ area.text }}
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-navbar-nav>
-      <b-navbar-nav class="ml-auto">
-        <b-link to="/nav/Settings" class="settings-button">
-          <b-button letiant="primary">设置</b-button>
-        </b-link>
-      </b-navbar-nav>
-    </b-navbar>
+    <TopBar v-model="currentArea"/>
     <div class="top-menu">
-
     </div>
     <b-container fluid="">
       <b-row>
-        <b-col xs3 align-h="center" style="border: #222222 solid 1px;">
+        <b-col xs3 align-h="center">
           {{ selected }}
           <b-form-group>
             <b-row class="icon3">
               <label>
-                <b-form-radio v-model="selected" name="some-radios" value="展项">展项</b-form-radio>
+                <b-form-radio v-model="selected" name="some-radios" value="展项" @click="paint">展项</b-form-radio>
                 <img src="../assets/images/展项管理.png" alt="">
               </label>
             </b-row>
             <b-row class="icon3">
               <label>
-                <b-form-radio v-model="selected" name="some-radios" value="主机">主机</b-form-radio>
+                <b-form-radio v-model="selected" name="some-radios" value="主机" @click="paint">主机</b-form-radio>
                 <img src="../assets/images/主机.png" alt="">
               </label>
             </b-row>
             <b-row class="icon3">
               <label>
-                <b-form-radio v-model="selected" name="some-radios" value="投影仪">投影仪</b-form-radio>
+                <b-form-radio v-model="selected" name="some-radios" value="投影仪" @click="paint">投影仪</b-form-radio>
                 <img src="../assets/images/投影仪.png" alt="">
               </label>
             </b-row>
           </b-form-group>
         </b-col>
-        <b-col style="margin: 0;padding: 0" v-if="selected==='展项'">
+        <b-col style="margin: 0;padding: 0" v-show="selected==='展项'" xs9>
           <canvas ref="panel"
                   width="600"
                   height="600"
                   @mousedown="mouseDown"
                   @mousemove="mouseMove"
-                  @mouseup="mouseUp"
-          ></canvas>
+                  @mouseup="mouseUp"></canvas>
         </b-col>
-        <b-col v-if="selected==='主机'||selected==='投影仪'">
+        <b-col v-if="selected==='主机'||selected==='投影仪'" xs9>
           <b-card>
-            <b-table striped hover :items="deviceList" :fields="[{key:'Name', label:'设备名称'},{key:'HardwareInstructionList', label:'指令列表'}]">
+            <b-table striped hover :items="deviceList"
+                     :fields="[{key:'Name', label:'设备名称'},{key:'HardwareInstructionList', label:'指令列表'}]">
               <template v-slot:cell(HardwareInstructionList)="data">
-                <b-button v-for="instruction in data.item.HardwareInstructionList"
-                          @click="exec({device, cmd:instruction})" variant="primary">
-                  {{ instruction.InstructionName }}
-                </b-button>
+                <template v-if="data.item.HardwareInstructionList">
+                  <b-col v-for="instruction in data.item.HardwareInstructionList">
+                    <b-button @click="exec({device, cmd:instruction})" variant="primary">
+                      {{ instruction.InstructionName }}
+                    </b-button>
+                  </b-col>
+                </template>
               </template>
             </b-table>
           </b-card>
@@ -102,8 +89,11 @@
 </template>
 
 <script>
+import TopBar from "./TopBar";
+
 export default {
   name: "ExhibitionArea",
+  components: {TopBar},
   props: {
     tab: {
       type: String,
@@ -115,9 +105,9 @@ export default {
       down: false,
       selected: this.$route.query.tab || '展项',
       showLeft: false,
-      areaListOptions: [],
       currentArea: null,
-      currentItem: null
+      currentItem: null,
+      areaListOptions: [],
     }
   },
   computed: {
@@ -126,11 +116,12 @@ export default {
         return (arr1 || []).reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
       }
 
+      let vm = this;
       return flattenDeep([
-        this.selected === "主机" ? "HardwareEquipmentComputerList" : "HardwareEquipmentProjectorList",
+        vm.selected === "主机" ? "HardwareEquipmentComputerList" : "HardwareEquipmentProjectorList",
         "NetworkDeviceComputers",
         "NetworkDeviceProjectors"
-      ].map(k => this.areaListOptions.map(({value}) => ((value || {}).ExhibitionItemList || []).map(item => item[k]))));
+      ].map(k => vm.areaListOptions.map(({value}) => ((value || {}).ExhibitionItemList || []).map(item => item[k]))));
     },
     devices() {
       return Array.prototype.concat.apply(...[
@@ -144,12 +135,10 @@ export default {
   watch: {
     selected: {
       handler() {
-        this.paint()
       }
     },
     currentArea: {
       async handler(neo) {
-        console.log({neo});
         this.currentItem = this.currentItem || neo.ExhibitionItemList[0]
         this.paint()
       },
@@ -175,7 +164,7 @@ export default {
       let {width, height} = this.getCanvas();
       let lowestDistance = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))
       let lowest = null
-      let itemList = this.currentArea.ExhibitionItemList;
+      let itemList = (this.currentArea || {}).ExhibitionItemList;
       if (itemList) {
         for (let i in itemList) {
           let item = itemList[i];
@@ -218,7 +207,7 @@ export default {
       let context = this.getContext();
       context.fillStyle = "white";
       context.fillRect(0, 0, canvas.width, canvas.height)
-      let itemList = this.currentArea.ExhibitionItemList;
+      let itemList = (this.currentArea || {}).ExhibitionItemList;
       if (itemList) {
         let {width, height} = this.getCanvas();
         for (let i in itemList) {
@@ -293,8 +282,8 @@ export default {
       ctx.fillText(text || 'Hello world', x || 10, y || 50)
     },
     onmessage({ws, args}) {
-      // console.log(`onmessage ${this}`, args.data);
-      this.$success(JSON.stringify(args, undefined, 4))
+      console.log(`onmessage ${this}`, args.data);
+      this.$success(JSON.stringify(args.data, undefined, 4))
     },
     onopen({ws, args}) {
       ws.send(`on open ${this} ${JSON.stringify(args)}`);
@@ -304,12 +293,12 @@ export default {
       this.$success(args.data)
     },
     async reload() {
-      this.areaListOptions = await this.$getData("/GetExhibitionAreaDropDownList");
-      this.currentArea = this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
       this.smile();
       this.doubleTriangles();
       this.cycles();
       this.startWebSocket();
+      this.areaListOptions = await this.$getData("/GetExhibitionAreaDropDownList");
+      this.currentArea = this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
     }
   },
   mounted() {
@@ -321,7 +310,7 @@ export default {
 <style lang="less" scoped>
 /*画布*/
 canvas {
-  border: black 1px solid;
+  //border: black 1px solid;
   margin: 0;
   padding: 0;
 }
@@ -335,18 +324,15 @@ canvas {
 }
 
 .main-page {
-  border: #222222 1px solid;
+  //border: #222222 1px solid;
   height: 100%;
 }
 
 .top-menu {
   width: 100%;
   padding: 1%;
-  border: #222222 1px solid;
+  //border: #222222 1px solid;
 
-  .settings-button {
-    float: right;
-  }
 }
 
 .dialog {
