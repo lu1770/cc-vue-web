@@ -152,7 +152,7 @@ function extensions(Vue, options) {
     }
 
     vue.wsObserverList = [...new Set([vue, ...vue.wsObserverList])];
-    const ws = new WebSocket("ws://localhost:8181");
+    const ws = new WebSocket("ws://192.168.5.158:8181");
     ws.onopen = fire(ws, "onopen");
     ws.onmessage = fire(ws, "onmessage");
     ws.onclose = fire(ws, "onclose");

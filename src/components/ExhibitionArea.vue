@@ -1,90 +1,85 @@
 <template>
   <div class="main-page">
     <TopBar v-model="currentArea"/>
-    <div class="top-menu">
-    </div>
-    <b-container fluid="">
-      <b-row>
-        <b-col xs3 align-h="center">
-          {{ selected }}
-          <b-form-group>
-            <b-row class="icon3">
-              <label>
-                <b-form-radio v-model="selected" name="some-radios" value="展项" @click="paint">展项</b-form-radio>
-                <img src="../assets/images/展项管理.png" alt="">
-              </label>
-            </b-row>
-            <b-row class="icon3">
-              <label>
-                <b-form-radio v-model="selected" name="some-radios" value="主机" @click="paint">主机</b-form-radio>
-                <img src="../assets/images/主机.png" alt="">
-              </label>
-            </b-row>
-            <b-row class="icon3">
-              <label>
-                <b-form-radio v-model="selected" name="some-radios" value="投影仪" @click="paint">投影仪</b-form-radio>
-                <img src="../assets/images/投影仪.png" alt="">
-              </label>
-            </b-row>
-          </b-form-group>
-        </b-col>
-        <b-col style="margin: 0;padding: 0" v-show="selected==='展项'" xs9>
+    <div>
+      <div>
+        <div class="left-btn-group">
+          <b-link to="/nav/ExhibitionArea?tab=展项" class="btn1 btn-left">
+            <div>
+              <img src="../assets/images/展区.png"/>
+            </div>
+            <div for="展项">展项</div>
+          </b-link>
+          <b-link to="/nav/ExhibitionArea?tab=主机" class="btn2 btn-left">
+            <div>
+              <img src="../assets/images/主机.png"/>
+            </div>
+            <div for="主机">主机</div>
+          </b-link>
+          <b-link to="/nav/ExhibitionArea?tab=投影仪" class="btn3 btn-left">
+            <div>
+              <img src="../assets/images/投影仪.png"/>
+            </div>
+            <div for="投影仪">投影仪</div>
+          </b-link>
+        </div>
+        <div style="margin: 0;padding: 0" v-show="selected==='展项'" xs9>
           <canvas ref="panel"
                   width="600"
                   height="600"
                   @mousedown="mouseDown"
                   @mousemove="mouseMove"
                   @mouseup="mouseUp"></canvas>
-        </b-col>
-        <b-col v-if="selected==='主机'||selected==='投影仪'" xs9>
+        </div>
+        <div v-if="selected==='主机'||selected==='投影仪'" xs9>
           <b-card>
             <b-table striped hover :items="deviceList"
                      :fields="[{key:'Name', label:'设备名称'},{key:'HardwareInstructionList', label:'指令列表'}]">
               <template v-slot:cell(HardwareInstructionList)="data">
                 <template v-if="data.item.HardwareInstructionList">
-                  <b-col v-for="instruction in data.item.HardwareInstructionList">
+                  <div v-for="instruction in data.item.HardwareInstructionList">
                     <b-button @click="exec({device, cmd:instruction})" variant="primary">
                       {{ instruction.InstructionName }}
                     </b-button>
-                  </b-col>
+                  </div>
                 </template>
               </template>
             </b-table>
           </b-card>
-        </b-col>
+        </div>
         <div class="dialog" v-if="showLeft && currentItem">
           <b-button @click="showLeft=false" letiant="primary">X</b-button>
-          <b-col>
-            <b-row><h3>{{ currentItem.Name }} {{ currentItem.Id }}</h3></b-row>
+          <div>
+            <div><h3>{{ currentItem.Name }} {{ currentItem.Id }}</h3></div>
             <b-button-group>
               <b-button variant="success" @click="$alert('未实现')">展项开</b-button>
               <b-button variant="danger" @click="$alert('未实现')">展项关</b-button>
             </b-button-group>
-            <b-row>
-              <b-col v-if="currentItem && devices">
-                <b-row><h3>设备列表</h3></b-row>
-                <b-row v-for="device in devices">
-                  <b-col>
+            <div>
+              <div v-if="currentItem && devices">
+                <div><h3>设备列表</h3></div>
+                <div v-for="device in devices">
+                  <div>
                     <label>{{ device.Name }}</label>
-                  </b-col>
-                  <b-col>
+                  </div>
+                  <div>
                     <b-button-group>
                       <b-button variant="primary" v-for="cmd in device.HardwareInstructionList"
                                 @click="exec({device, cmd})">
                         {{ cmd.InstructionName }}
                       </b-button>
                     </b-button-group>
-                  </b-col>
-                </b-row>
-                <b-row v-if="devices && devices.length==0">
+                  </div>
+                </div>
+                <div v-if="devices && devices.length==0">
                   无设备
-                </b-row>
-              </b-col>
-            </b-row>
-          </b-col>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </b-row>
-    </b-container>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -111,6 +106,9 @@ export default {
     }
   },
   computed: {
+    document() {
+      return document;
+    },
     deviceList() {
       function flattenDeep(arr1) {
         return (arr1 || []).reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
@@ -155,7 +153,7 @@ export default {
       return this.$refs.panel
     },
     getContext() {
-      return this.getCanvas().getContext('2d')
+      return this.$refs.panel.getContext('2d')
     },
     mouseDown(e) {
       this.down = true;
@@ -346,13 +344,44 @@ canvas {
   padding: 10px;
 }
 
-.icon3 {
-  margin: auto;
-  width: 120px;
+.left-btn-group {
+  width: 30%;
+  height: 100%;
+  overflow: hidden;
+}
 
-  img {
-    width: 120px;
-    height: 120px;
+@width: 160px;
+@height: 160px;
+@margin: 15px;
+
+.btn-left {
+  text-align: center;
+  line-height: @height;
+  color: #e1e1e1;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-image: url("../assets/images/框框.png");
+  background-size: @width @height;
+  width: @width;
+  height: @height;
+  margin: @margin;
+
+  div {
+    img {
+      width: 120%;
+      height: 120%;
+    }
+
+    margin: auto;
+    width: 30%;
+    height: 30%;
   }
 }
+
+.btn2 {
+}
+
+.btn3 {
+}
+
 </style>

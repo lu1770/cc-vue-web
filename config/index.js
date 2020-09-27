@@ -52,7 +52,7 @@ module.exports = {
     // assetsRoot: path.resolve(__dirname, '../dist'),
     assetsRoot: path.resolve(__dirname, wwwroot),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/Kiosoft.Serial.Web.Api/Content',
+    assetsPublicPath: '/Kiosoft.Serial.Web.Api/Content/',
 
     /**
      * Source Maps

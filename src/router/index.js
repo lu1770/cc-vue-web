@@ -23,7 +23,7 @@ componentsContext.keys().forEach(component => {
 });
 
 routes = [...new Set(routes), {
-  path: "/", name: "ExhibitionArea", component: () => import("../components/ExhibitionArea")
+  path: "/", name: "Entrance", component: () => import("../components/Entrance")
 }];
 
 export default new Router({
