@@ -20,7 +20,7 @@
       <h3 class="title">科奥展馆智能中控系统</h3>
       <p class="title">KIO INTELLIGENT CENTRAL CONTROL SYSTEM OF EXHIBITION HALL</p>
     </div>
-    <div class="icon-w-buttons" @click="scrolled = true">
+    <div class="icon-w-buttons" @click="scrolled = true" @scroll="scrolled = true">
       <div class="icon-w-buttons-row">
         <router-link to="/nav/TurnOnAll" class="btn-w-icon">
           <div class="btn-w-icon-border"></div>

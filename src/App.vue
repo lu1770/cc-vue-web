@@ -56,6 +56,7 @@ export default {
       this.$success(env)
     }, async reload() {
       this.listenKeyEvent();
+      // setTimeout(()=>location.reload(), 5000)
     },
     renderResize() {
       location.reload();

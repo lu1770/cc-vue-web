@@ -10,6 +10,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/style.css'
 import './assets/global.less'
+import './registerServiceWorker';
+
+
 
 import Vue2TouchEvents from 'vue2-touch-events'
 
@@ -17,6 +20,7 @@ Vue.use(Vue2TouchEvents)
 import {Datepicker, Timepicker, DatetimePicker} from '@livelybone/vue-datepicker';
 import Extensions from './extensions'
 import {NavbarPlugin} from 'bootstrap-vue'
+import './registerServiceWorker'
 
 Vue.use(NavbarPlugin)
 Vue.use(BootstrapVue);

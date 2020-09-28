@@ -8,37 +8,17 @@ function $alertIfError({err, resp, url}) {
   return false;
 }
 
-/**
- * 主题配置
- * @type {({options: [{text: string, value: string}, {text: string, value: string}, {text: string, value: string}], label: string}|{options: [{text: string, value: string}, {text: string, value: string}, {text: string, value: string}], label: string})[]}
- */
-let themeOptions = [
-  {
-    label: '水果',
-    options: [
-      {text: '殷桃', value: 'theme1',},
-      {text: '芒果', value: 'theme2',},
-      {text: '草莓', value: 'theme3',},
-    ]
-  },
-  {
-    label: '游戏',
-    options: [
-      {text: '植物大战僵尸', value: 'theme4',},
-      {text: '英雄联盟', value: 'theme5',},
-      {text: '超级玛丽奥', value: 'theme6',},
-    ]
-  },
-];
-
 function messageShow(variant, msg) {
+  console.log(`toast://${msg}`)
   let vm = this;
-  vm.messageVariant = variant;
-  vm.showDismissibleAlert = true;
-  vm.errorMessage = msg;
-  setTimeout(() => {
-    vm.showDismissibleAlert = false;
-  }, 3000);
+  if (vm) {
+    vm.messageVariant = variant;
+    vm.showDismissibleAlert = true;
+    vm.errorMessage = msg;
+    setTimeout(() => {
+      vm.showDismissibleAlert = false;
+    }, 3000)
+  }
 }
 
 function $alert(msg) {
@@ -185,7 +165,6 @@ function extensions(Vue, options) {
   Vue.prototype.isMobile = userAgent.indexOf('iPhone OS') > -1;
   // if(isTV) setHome(this, window.location);
 
-  Vue.prototype.themeOptions = themeOptions
   Vue.prototype.getThemeName = getThemeName
   Vue.prototype.info = `屏幕分辨率为：${screen.width}*${screen.height}<br />屏幕可用大小：${screen.availWidth}*${screen.availHeight}<br />网页可见区域宽：${document.body.clientWidth}<br />网页可见区域高：${document.body.clientHeight}<br />网页可见区域宽(包括边线的宽)：${document.body.offsetWidth}<br />网页可见区域高(包括边线的宽)：${document.body.offsetHeight}<br />网页正文全文宽：${document.body.scrollWidth}<br />网页正文全文高：${document.body.scrollHeight}<br />网页被卷去的高：${document.body.scrollTop}<br />网页被卷去的左：${document.body.scrollLeft}<br />网页正文部分上：${window.screenTop}<br />网页正文部分左：${window.screenLeft}<br />屏幕分辨率的高：${window.screen.height}<br />屏幕分辨率的宽：${window.screen.width}<br />屏幕可用工作区高度：${window.screen.availHeight}<br />屏幕可用工作区宽度：${window.screen.availWidth}`;
 

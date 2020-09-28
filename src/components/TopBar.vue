@@ -5,7 +5,7 @@
     </b-link>
     <b-navbar-nav class="ml-auto">
       <b-nav-item-dropdown :text="(currentArea||{}).Name||'展区名称'" left>
-        <b-dropdown-item v-for="area in areaListOptions" @click="currentArea=area.value">{{ area.text }}
+        <b-dropdown-item v-for="area in areaListOptions" @click="currentArea=area.value" v-bind:key="area.value">{{ area.text }}
         </b-dropdown-item>
       </b-nav-item-dropdown>
     </b-navbar-nav>

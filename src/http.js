@@ -9,6 +9,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   host = "http://192.168.5.164/Kiosoft.Serial.Web.Api"
 }
+host = "/Kiosoft.Serial.Web.Api"
 host += '';
 function init() {
   // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
