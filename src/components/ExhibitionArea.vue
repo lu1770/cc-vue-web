@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <TopBar v-model="currentArea"/>
+    <TopBar v-model="currentArea" />
     <div>
       <div>
         <div class="left-btn-group">
@@ -16,41 +16,63 @@
               <div class="btn-w-icon-border"></div>
             </div>
           </router-link>
-          <router-link to="/nav/ExhibitionArea?tab=投影仪" class="btn3 btn-left">
+          <router-link
+            to="/nav/ExhibitionArea?tab=投影仪"
+            class="btn3 btn-left"
+          >
             <div class="btn-icon btn-icon-3">
               投影仪
               <div class="btn-w-icon-border"></div>
             </div>
           </router-link>
-          <router-link to="/nav/ExhibitionArea?tab=投影仪" class="btn3 btn-left">
+          <router-link
+            to="/nav/ExhibitionArea?tab=投影仪"
+            class="btn3 btn-left"
+          >
             <div class="btn-icon btn-icon-3">
               投影仪
               <div class="btn-w-icon-border"></div>
             </div>
           </router-link>
-          <router-link to="/nav/ExhibitionArea?tab=投影仪" class="btn3 btn-left">
+          <router-link
+            to="/nav/ExhibitionArea?tab=投影仪"
+            class="btn3 btn-left"
+          >
             <div class="btn-icon btn-icon-3">
               投影仪
               <div class="btn-w-icon-border"></div>
             </div>
           </router-link>
         </div>
-        <div v-show="selected==='展项'">
-          <canvas ref="panel"
-                  width="694" height="478"
-                  @mousedown="mouseDown"
-                  @mousemove="mouseMove"
-                  @mouseup="mouseUp">
+        <div v-show="selected === '展项'">
+          <canvas
+            ref="panel"
+            width="694"
+            height="478"
+            @mousedown="mouseDown"
+            @mousemove="mouseMove"
+            @mouseup="mouseUp"
+          >
           </canvas>
         </div>
-        <div v-if="selected==='主机'||selected==='投影仪'" xs9>
+        <div v-if="selected === '主机' || selected === '投影仪'" xs9>
           <b-card>
-            <b-table striped hover :items="deviceList"
-                     :fields="[{key:'Name', label:'设备名称'},{key:'HardwareInstructionList', label:'指令列表'}]">
+            <b-table
+              striped
+              hover
+              :items="deviceList"
+              :fields="[
+                { key: 'Name', label: '设备名称' },
+                { key: 'HardwareInstructionList', label: '指令列表' },
+              ]"
+            >
               <template v-slot:cell(HardwareInstructionList)="data">
                 <template v-if="data.item.HardwareInstructionList">
                   <div v-for="instruction in data.item.HardwareInstructionList">
-                    <b-button @click="exec({device, cmd:instruction})" variant="primary">
+                    <b-button
+                      @click="exec({ device, cmd: instruction })"
+                      variant="primary"
+                    >
                       {{ instruction.InstructionName }}
                     </b-button>
                   </div>
@@ -60,12 +82,23 @@
           </b-card>
         </div>
         <div class="dialog" v-if="showLeft && currentItem">
-          <b-button class="close-dialog" @click="showLeft=false" variant="outline-primary">X</b-button>
+          <b-button
+            class="close-dialog"
+            @click="showLeft = false"
+            variant="outline-primary"
+            >X</b-button
+          >
           <div>
-            <div><h3>{{ currentItem.Name }} {{ currentItem.Id }}</h3></div>
+            <div>
+              <h3>{{ currentItem.Name }} ({{ currentItem.Id }})</h3>
+            </div>
             <b-button-group>
-              <b-button variant="success" @click="$alert('未实现')">展项开</b-button>
-              <b-button variant="danger" @click="$alert('未实现')">展项关</b-button>
+              <b-button variant="success" @click="$alert('未实现')"
+                >展项开</b-button
+              >
+              <b-button variant="danger" @click="$alert('未实现')"
+                >展项关</b-button
+              >
             </b-button-group>
             <div>
               <div v-if="currentItem && devices">
@@ -76,16 +109,18 @@
                   </div>
                   <div>
                     <b-button-group>
-                      <b-button variant="primary" v-for="cmd in device.HardwareInstructionList"
-                                @click="exec({device, cmd})" v-bind:key="cmd.InstructionName">
+                      <b-button
+                        variant="primary"
+                        v-for="cmd in device.HardwareInstructionList"
+                        @click="exec({ device, cmd })"
+                        v-bind:key="cmd.InstructionName"
+                      >
                         {{ cmd.InstructionName }}
                       </b-button>
                     </b-button-group>
                   </div>
                 </div>
-                <div v-if="devices && devices.length==0">
-                  无设备
-                </div>
+                <div v-if="devices && devices.length == 0">无设备</div>
               </div>
             </div>
           </div>
@@ -100,22 +135,22 @@ import TopBar from "./TopBar";
 
 export default {
   name: "ExhibitionArea",
-  components: {TopBar},
+  components: { TopBar },
   props: {
     tab: {
       type: String,
-      default: () => '展项'
-    }
+      default: () => "展项",
+    },
   },
   data() {
     return {
       down: false,
-      selected: this.$route.query.tab || '展项',
+      selected: this.$route.query.tab || "展项",
       showLeft: false,
       currentArea: null,
       currentItem: null,
       areaListOptions: [],
-    }
+    };
   },
   computed: {
     document() {
@@ -123,66 +158,80 @@ export default {
     },
     deviceList() {
       function flattenDeep(arr1) {
-        return (arr1 || []).reduce((acc, val) => Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val), []);
+        return (arr1 || []).reduce(
+          (acc, val) =>
+            Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val),
+          []
+        );
       }
 
       let vm = this;
-      return flattenDeep([
-        vm.selected === "主机" ? "HardwareEquipmentComputerList" : "HardwareEquipmentProjectorList",
-        "NetworkDeviceComputers",
-        "NetworkDeviceProjectors"
-      ].map(k => vm.areaListOptions.map(({value}) => ((value || {}).ExhibitionItemList || []).map(item => item[k]))));
+      return flattenDeep(
+        [
+          vm.selected === "主机"
+            ? "HardwareEquipmentComputerList"
+            : "HardwareEquipmentProjectorList",
+          "NetworkDeviceComputers",
+          "NetworkDeviceProjectors",
+        ].map((k) =>
+          vm.areaListOptions.map(({ value }) =>
+            ((value || {}).ExhibitionItemList || []).map((item) => item[k])
+          )
+        )
+      );
     },
     devices() {
-      return Array.prototype.concat.apply(...[
-        "HardwareEquipmentComputerList",
-        "HardwareEquipmentProjectorList",
-        "NetworkDeviceComputers",
-        "NetworkDeviceProjectors"
-      ].map(k => (this.currentItem || {})[k]));
-    }
+      return Array.prototype.concat.apply(
+        ...[
+          "HardwareEquipmentComputerList",
+          "HardwareEquipmentProjectorList",
+          "NetworkDeviceComputers",
+          "NetworkDeviceProjectors",
+        ].map((k) => (this.currentItem || {})[k])
+      );
+    },
   },
   watch: {
     selected: {
-      handler() {
-      }
+      handler() {},
     },
     currentArea: {
       async handler(neo) {
-        this.currentItem = this.currentItem || neo.ExhibitionItemList[0]
-        this.paint()
+        this.currentItem = this.currentItem || neo.ExhibitionItemList[0];
+        this.paint();
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   methods: {
-    async exec({device, cmd}) {
-      console.log({device, cmd})
-      let {result} = await this.$postData("/Execute", cmd)
-      this.$success(result)
+    async exec({ device, cmd }) {
+      console.log({ device, cmd });
+      // let { result } = await this.$postData("/Execute", cmd);
+      // this.$success(result);
+      this.ws.send(JSON.stringify(cmd));
     },
     getCanvas() {
-      return this.$refs.panel
+      return this.$refs.panel;
     },
     getContext() {
-      return this.$refs.panel.getContext('2d')
+      return this.$refs.panel.getContext("2d");
     },
     mouseDown(e) {
       this.down = true;
       this.showLeft = this;
       this.paint(e);
-      let {width, height} = this.getCanvas();
-      let lowestDistance = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))
-      let lowest = null
+      let { width, height } = this.getCanvas();
+      let lowestDistance = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+      let lowest = null;
       let itemList = (this.currentArea || {}).ExhibitionItemList;
       if (itemList) {
         for (let i in itemList) {
           let item = itemList[i];
-          let {Name, X, Y} = item;
+          let { Name, X, Y } = item;
           let x = X * width;
           let y = Y * height;
           if (e) {
-            let distance = this.calcOneDistance({e, x, y});
+            let distance = this.calcOneDistance({ e, x, y });
             if (distance < lowestDistance) {
               lowestDistance = distance;
               lowest = item;
@@ -201,16 +250,17 @@ export default {
       canvas.strokeStyle = "rgba(0, 0, 200, 0.5)";
       canvas.strokeRect(x, y, 8, 4);
     },
-    calcDistance: function ({x, mouseX, y, mouseY}) {
-      return Math.round(Math.sqrt(Math.pow(x - mouseX, 2) + Math.pow(y - mouseY, 2)), 2);
+    calcDistance: function ({ x, mouseX, y, mouseY }) {
+      return Math.round(
+        Math.sqrt(Math.pow(x - mouseX, 2) + Math.pow(y - mouseY, 2)),
+        2
+      );
     },
-    calcOneDistance: function ({e, x, y}) {
-      let {
-        offsetX,
-        offsetY,
-      } = e;
-      let mouseX = offsetX, mouseY = offsetY;
-      return this.calcDistance({x, mouseX, y, mouseY});
+    calcOneDistance: function ({ e, x, y }) {
+      let { offsetX, offsetY } = e;
+      let mouseX = offsetX,
+        mouseY = offsetY;
+      return this.calcDistance({ x, mouseX, y, mouseY });
     },
     paint(e) {
       let canvas = this.getCanvas();
@@ -218,26 +268,32 @@ export default {
       context.fillStyle = "rgb(24,28,54)";
       let w = 900 || canvas.width;
       let h = 900 || canvas.height;
-      context.fillRect(0, 0, w, h)
+      context.fillRect(0, 0, w, h);
       let itemList = (this.currentArea || {}).ExhibitionItemList;
 
+      let src = `/Kiosoft.Serial.Web.Api/upload/${
+          this.currentArea.BackgroundImageFile ||
+          "data/img/bg/f674783460294be1b16b1c9f7c7fd1bd.png"
+        }`,
+        vm = this;
       let img = new Image();
-      img.src = `/Kiosoft.Serial.Web.Api/upload/${this.currentArea.BackgroundImageFile || "data/img/bg/f674783460294be1b16b1c9f7c7fd1bd.png"}`;
-      console.log(img.src)
+      img.onerror = () => vm.$alert(`加载底图失败 ${src}`);
+      img.src = src;
+      console.log(img.src);
       context.drawImage(img, 0, 0, 694, 478);
 
       if (itemList) {
-        let {width, height} = this.getCanvas();
+        let { width, height } = this.getCanvas();
         for (let i in itemList) {
-          let {Name, Text, X, Y} = itemList[i];
+          let { Name, Text, X, Y } = itemList[i];
           let x = X * width;
           let y = Y * height;
           if (e) {
-            let distance = this.calcOneDistance({e, x, y});
+            let distance = this.calcOneDistance({ e, x, y });
             let text = `${Text} (${distance})`;
-            this.fillText({text, x, y})
+            this.fillText({ text, x, y });
           } else {
-            this.fillText({text: Name, x: x, y: y})
+            this.fillText({ text: Name, x: x, y: y });
           }
         }
       }
@@ -250,11 +306,11 @@ export default {
       ctx.beginPath();
       ctx.arc(75, 75, 50, 0, Math.PI * 2, true); // Outer circle
       ctx.moveTo(110, 75);
-      ctx.arc(75, 75, 35, 0, Math.PI, false);  // Mouth (clockwise)
+      ctx.arc(75, 75, 35, 0, Math.PI, false); // Mouth (clockwise)
       ctx.moveTo(65, 65);
-      ctx.arc(60, 65, 5, 0, Math.PI * 2, true);  // Left eye
+      ctx.arc(60, 65, 5, 0, Math.PI * 2, true); // Left eye
       ctx.moveTo(95, 65);
-      ctx.arc(90, 65, 5, 0, Math.PI * 2, true);  // Right eye
+      ctx.arc(90, 65, 5, 0, Math.PI * 2, true); // Right eye
       ctx.stroke();
     },
     doubleTriangles() {
@@ -291,157 +347,174 @@ export default {
         }
       }
     },
-    fillText: function ({text, x, y, fillStyle, font}) {
-      let {width, height} = this.getCanvas();
+    fillText: function ({ text, x, y, fillStyle, font }) {
+      let { width, height } = this.getCanvas();
       // console.log("fillText", {text, x, y, fillStyle, font}, {width, height})
       let ctx = this.getContext();
       ctx.fillStyle = fillStyle || "blue";
-      ctx.font = font || '14px serif';
-      ctx.fillText(text || 'Hello world', x || 10, y || 50)
+      ctx.font = font || "14px serif";
+      ctx.fillText(text || "Hello world", x || 10, y || 50);
     },
-    onmessage({ws, args}) {
+    onmessage({ ws, args }) {
       console.log(`onmessage ${this}`, args.data);
-      this.$success(JSON.stringify(args.data, undefined, 4))
+      this.$success(JSON.stringify(args.data, undefined, 4));
     },
-    onopen({ws, args}) {
+    onopen({ ws, args }) {
       ws.send(`on open ${this} ${JSON.stringify(args)}`);
       /*
               setInterval(() =>
                 this.ws.send("展现界面准备完毕"), 1000)*/
-      this.$success(args.data)
+      this.$success(args.data);
     },
     async reload() {
+      this.startWebSocket();
       // this.smile();
       // this.doubleTriangles();
       // this.cycles();
-      this.startWebSocket();
-
       // 默认值
-      this.areaListOptions = [{
-        "value": {
-          "Id": 7,
-          "Name": "序厅",
-          "Count": 1,
-          "ExhibitionItemList": [{
-            "HardwareEquipmentComputerList": [{
-              "HardwareInstructionList": [{
-                "Id": 25,
-                "InstructionName": "开机",
-                "InstructionContent": "(send \"PC ON\")",
-                "Enable": true,
-                "HardwareEquipmentId": 14
-              }, {
-                "Id": 26,
-                "InstructionName": "关机",
-                "InstructionContent": "(send \"PC OFF\")",
-                "Enable": true,
-                "HardwareEquipmentId": 14
-              }],
-              "HardwareProjector": null,
-              "DeviceType": "硬件受控主机",
-              "ProjectorName": null,
-              "Id": 14,
-              "CentralControllerPortId": 101,
-              "IsRunning": 1,
-              "Name": "PC 01",
-              "ExhibitionItemName": null,
-              "ExhibitionItemId": null,
-              "CentralControllerId": 14,
-              "Remark": null,
-              "SerialPortControllerId": null,
-              "Order": 3,
-              "TransactionNo": "f264968f3b9147579aa89ff500f8326d",
-              "VersionNo": 1,
-              "CreatedBy": "科奥中控控制系统（体验版）",
-              "CreationDate": "2020-09-24T17:38:43",
-              "LastUpdatedBy": null,
-              "LastUpdateDate": null
-            }],
-            "HardwareEquipmentProjectorList": [{
-              "HardwareInstructionList": [{
-                "Id": 27,
-                "InstructionName": "开机",
-                "InstructionContent": "(send \"PC ON\")",
-                "Enable": true,
-                "HardwareEquipmentId": 15
-              }, {
-                "Id": 28,
-                "InstructionName": "关机",
-                "InstructionContent": "(send \"PC OFF\")",
-                "Enable": true,
-                "HardwareEquipmentId": 15
-              }],
-              "DeviceType": "硬件受控投影仪",
-              "Id": 15,
-              "CentralControllerPortId": 201,
-              "IsRunning": 1,
-              "Name": "Projector 01",
-              "ExhibitionItemName": null,
-              "ExhibitionItemId": null,
-              "CentralControllerId": 14,
-              "Remark": null,
-              "SerialPortControllerId": null,
-              "Order": 5,
-              "TransactionNo": "f264968f3b9147579aa89ff500f8326d",
-              "VersionNo": 1,
-              "CreatedBy": "科奥中控控制系统（体验版）",
-              "CreationDate": "2020-09-24T17:38:43",
-              "LastUpdatedBy": null,
-              "LastUpdateDate": null
-            }],
-            "NetworkDeviceComputers": [],
-            "NetworkDeviceProjectors": [],
-            "Id": 8,
-            "Name": "小火车",
-            "ExhibitionAreaId": 7,
-            "Count": 0,
-            "Icon": "Icon/alert.png",
-            "X": 0.0,
-            "Y": 0.0,
-            "TextX": 0.0,
-            "TextY": 0.0,
-            "GraphicWidth": 0,
-            "GraphicHeight": 0,
-            "Location": "0, 0",
-            "Text": "未命名绘图点",
-            "TextLocation": "0, 60",
-            "TransactionNo": "f264968f3b9147579aa89ff500f8326d",
-            "VersionNo": 1,
-            "CreatedBy": "科奥中控控制系统（体验版）",
-            "CreationDate": "2020-09-24T17:38:43",
-            "LastUpdatedBy": null,
-            "LastUpdateDate": null,
-            "Order": 2
-          }],
-          "X": 0,
-          "Y": 0,
-          "Location": "0, 0",
-          "BackgroundImageFile": null,
-          "Order": 1,
-          "TransactionNo": "f264968f3b9147579aa89ff500f8326d",
-          "VersionNo": 1,
-          "CreatedBy": "科奥中控控制系统（体验版）",
-          "CreationDate": "2020-09-24T17:38:43",
-          "LastUpdatedBy": null,
-          "LastUpdateDate": null
-        }, "text": "序厅"
-      }];
-      this.currentArea = this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
+      this.areaListOptions = [
+        {
+          value: {
+            Id: 7,
+            Name: "序厅",
+            Count: 1,
+            ExhibitionItemList: [
+              {
+                HardwareEquipmentComputerList: [
+                  {
+                    HardwareInstructionList: [
+                      {
+                        Id: 25,
+                        InstructionName: "开机",
+                        InstructionContent: '(send "PC ON")',
+                        Enable: true,
+                        HardwareEquipmentId: 14,
+                      },
+                      {
+                        Id: 26,
+                        InstructionName: "关机",
+                        InstructionContent: '(send "PC OFF")',
+                        Enable: true,
+                        HardwareEquipmentId: 14,
+                      },
+                    ],
+                    HardwareProjector: null,
+                    DeviceType: "硬件受控主机",
+                    ProjectorName: null,
+                    Id: 14,
+                    CentralControllerPortId: 101,
+                    IsRunning: 1,
+                    Name: "PC 01",
+                    ExhibitionItemName: null,
+                    ExhibitionItemId: null,
+                    CentralControllerId: 14,
+                    Remark: null,
+                    SerialPortControllerId: null,
+                    Order: 3,
+                    TransactionNo: "f264968f3b9147579aa89ff500f8326d",
+                    VersionNo: 1,
+                    CreatedBy: "科奥中控控制系统（体验版）",
+                    CreationDate: "2020-09-24T17:38:43",
+                    LastUpdatedBy: null,
+                    LastUpdateDate: null,
+                  },
+                ],
+                HardwareEquipmentProjectorList: [
+                  {
+                    HardwareInstructionList: [
+                      {
+                        Id: 27,
+                        InstructionName: "开机",
+                        InstructionContent: '(send "PC ON")',
+                        Enable: true,
+                        HardwareEquipmentId: 15,
+                      },
+                      {
+                        Id: 28,
+                        InstructionName: "关机",
+                        InstructionContent: '(send "PC OFF")',
+                        Enable: true,
+                        HardwareEquipmentId: 15,
+                      },
+                    ],
+                    DeviceType: "硬件受控投影仪",
+                    Id: 15,
+                    CentralControllerPortId: 201,
+                    IsRunning: 1,
+                    Name: "Projector 01",
+                    ExhibitionItemName: null,
+                    ExhibitionItemId: null,
+                    CentralControllerId: 14,
+                    Remark: null,
+                    SerialPortControllerId: null,
+                    Order: 5,
+                    TransactionNo: "f264968f3b9147579aa89ff500f8326d",
+                    VersionNo: 1,
+                    CreatedBy: "科奥中控控制系统（体验版）",
+                    CreationDate: "2020-09-24T17:38:43",
+                    LastUpdatedBy: null,
+                    LastUpdateDate: null,
+                  },
+                ],
+                NetworkDeviceComputers: [],
+                NetworkDeviceProjectors: [],
+                Id: 8,
+                Name: "小火车",
+                ExhibitionAreaId: 7,
+                Count: 0,
+                Icon: "Icon/alert.png",
+                X: 0.0,
+                Y: 0.0,
+                TextX: 0.0,
+                TextY: 0.0,
+                GraphicWidth: 0,
+                GraphicHeight: 0,
+                Location: "0, 0",
+                Text: "未命名绘图点",
+                TextLocation: "0, 60",
+                TransactionNo: "f264968f3b9147579aa89ff500f8326d",
+                VersionNo: 1,
+                CreatedBy: "科奥中控控制系统（体验版）",
+                CreationDate: "2020-09-24T17:38:43",
+                LastUpdatedBy: null,
+                LastUpdateDate: null,
+                Order: 2,
+              },
+            ],
+            X: 0,
+            Y: 0,
+            Location: "0, 0",
+            BackgroundImageFile: null,
+            Order: 1,
+            TransactionNo: "f264968f3b9147579aa89ff500f8326d",
+            VersionNo: 1,
+            CreatedBy: "科奥中控控制系统（体验版）",
+            CreationDate: "2020-09-24T17:38:43",
+            LastUpdatedBy: null,
+            LastUpdateDate: null,
+          },
+          text: "序厅",
+        },
+      ];
+      this.currentArea =
+        this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
 
       // 网络获取
-      this.areaListOptions = await this.$getData("/GetExhibitionAreaDropDownList");
-      this.currentArea = this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
+      this.areaListOptions = await this.$getData(
+        "/GetExhibitionAreaDropDownList"
+      );
+      this.currentArea =
+        this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
       this.paint();
-    }
+    },
   },
   mounted() {
     this.reload();
-  }
-}
+  },
+};
 </script>
 
 <style lang="less" scoped>
-
 canvas {
   position: fixed;
   top: 56px;
@@ -453,7 +526,7 @@ canvas {
 }
 
 /* 单选框 */
-[type=radio] {
+[type="radio"] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -470,7 +543,6 @@ canvas {
   width: 100%;
   padding: 1%;
   //border: #222222 1px solid;
-
 }
 
 .dialog {
@@ -544,5 +616,4 @@ canvas {
 
 .btn3 {
 }
-
 </style>

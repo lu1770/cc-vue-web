@@ -54,7 +54,8 @@ export default {
     },
     success(env) {
       this.$success(env)
-    }, async reload() {
+    }, 
+    async reload() {
       this.listenKeyEvent();
       // setTimeout(()=>location.reload(), 5000)
     },
