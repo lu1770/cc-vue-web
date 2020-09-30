@@ -4,82 +4,79 @@
     <div>
       <div>
         <div class="left-btn-group">
-          <router-link to="/nav/ExhibitionArea?tab=展项" class="btn1 btn-left">
-            <div class="btn-icon btn-icon-1">
-              展项
-              <div class="btn-w-icon-border"></div>
-            </div>
-          </router-link>
-          <router-link to="/nav/ExhibitionArea?tab=主机" class="btn2 btn-left">
-            <div class="btn-icon btn-icon-2">
-              主机
-              <div class="btn-w-icon-border"></div>
-            </div>
-          </router-link>
-          <router-link
-            to="/nav/ExhibitionArea?tab=投影仪"
-            class="btn3 btn-left"
-          >
-            <div class="btn-icon btn-icon-3">
-              投影仪
-              <div class="btn-w-icon-border"></div>
-            </div>
-          </router-link>
-          <router-link
-            to="/nav/ExhibitionArea?tab=投影仪"
-            class="btn3 btn-left"
-          >
-            <div class="btn-icon btn-icon-3">
-              投影仪
-              <div class="btn-w-icon-border"></div>
-            </div>
-          </router-link>
-          <router-link
-            to="/nav/ExhibitionArea?tab=投影仪"
-            class="btn3 btn-left"
-          >
-            <div class="btn-icon btn-icon-3">
-              投影仪
-              <div class="btn-w-icon-border"></div>
-            </div>
-          </router-link>
-        </div>
-        <div v-show="selected === '展项'">
-          <canvas
-            ref="panel"
-            width="694"
-            height="478"
-            @mousedown="mouseDown"
-            @mousemove="mouseMove"
-            @mouseup="mouseUp"
-          >
-          </canvas>
-        </div>
-        <div v-if="selected === '主机' || selected === '投影仪'" xs9>
-          <b-card>
-            <b-table
-              striped
-              hover
-              :items="deviceList"
-              :fields="[
-                { key: 'Name', label: '设备名称' },
-                { key: 'HardwareInstructionList', label: '指令列表' },
-              ]"
+          <div @click="switch_tab('展项')" class="btn1 btn-left">
+            <div class="btn-icon btn-icon-1">展项</div>
+            <div
+              class="btn-w-icon-border"
+              :class="selected === '展项' ? 'active' : ''"
             >
-              <template v-slot:cell(HardwareInstructionList)="data">
-                <template v-if="data.item.HardwareInstructionList">
-                  <div v-for="instruction in data.item.HardwareInstructionList">
-                    <b-button
-                      @click="exec({ device, cmd: instruction })"
-                      variant="primary"
+              <div class="inner"></div>
+            </div>
+          </div>
+          <div @click="switch_tab('主机')" class="btn2 btn-left">
+            <div class="btn-icon btn-icon-2">主机</div>
+            <div
+              class="btn-w-icon-border"
+              :class="selected === '主机' ? 'active' : ''"
+            >
+              <div class="inner"></div>
+            </div>
+          </div>
+          <div
+            @click="switch_tab('投影仪')"
+            class="btn3 btn-left"
+            v-for="i in 5"
+          >
+            <div class="btn-icon btn-icon-3">投影仪</div>
+            <div
+              class="btn-w-icon-border"
+              :class="selected === '投影仪' ? 'active' : ''"
+            >
+              <div class="inner"></div>
+            </div>
+          </div>
+        </div>
+        <div class="rightPanel">
+          <div v-show="selected === '展项'">
+            <canvas
+              ref="panel"
+              width="694"
+              height="478"
+              @mousedown="mouseDown"
+              @mousemove="mouseMove"
+              @mouseup="mouseUp"
+            >
+            </canvas>
+          </div>
+          <div v-show="isDeviceListTab" xs9>
+            <b-card>
+              <b-table
+                striped
+                hover
+                :items="deviceList"
+                :fields="[
+                  { key: 'Name', label: '设备名称' },
+                  { key: 'HardwareInstructionList', label: '指令列表' },
+                ]"
+              >
+                <template v-slot:cell(HardwareInstructionList)="data">
+                  <template v-if="data.item.HardwareInstructionList">
+                    <div
+                      v-for="instruction in data.item.HardwareInstructionList"
+                      v-bind:key="instruction.Id"
                     >
-                      {{ instruction.InstructionName }}
-                    </b-button>
-                  </div>
+                      <b-button
+                        @click="exec({ device, cmd: instruction })"
+                        variant="primary"
+                      >
+                        {{ instruction.InstructionName }}
+                      </b-button>
+                    </div>
+                  </template>
                 </template>
-              </template>
-            </b-table>
-          </b-card>
+              </b-table>
+            </b-card>
+          </div>
         </div>
         <div class="dialog" v-if="showLeft && currentItem">
           <b-button
@@ -103,7 +100,7 @@
             <div>
               <div v-if="currentItem && devices">
                 <div><h3>设备列表</h3></div>
-                <div v-for="device in devices">
+                <div v-for="device in devices" v-bind:key="device.Id">
                   <div>
                     <label>{{ device.Name }}</label>
                   </div>
@@ -153,6 +150,10 @@ export default {
     };
   },
   computed: {
+    isDeviceListTab() {
+      let { selected } = this;
+      return selected === "主机" || selected === "投影仪";
+    },
     document() {
       return document;
     },
@@ -204,6 +205,13 @@ export default {
     },
   },
   methods: {
+    switch_tab(chs) {
+      this.$router.push(`/nav/ExhibitionArea?tab=${chs}`).catch((err) => {
+        err;
+      });
+      this.selected = chs;
+      this.showLeft = false;
+    },
     async exec({ device, cmd }) {
       console.log({ device, cmd });
       // let { result } = await this.$postData("/Execute", cmd);
@@ -216,6 +224,9 @@ export default {
     getContext() {
       return this.$refs.panel.getContext("2d");
     },
+    /**
+     * 鼠标点下去
+     */
     mouseDown(e) {
       this.down = true;
       this.showLeft = this;
@@ -265,35 +276,36 @@ export default {
     paint(e) {
       let canvas = this.getCanvas();
       let context = this.getContext();
-      context.fillStyle = "rgb(24,28,54)";
-      let w = 900 || canvas.width;
-      let h = 900 || canvas.height;
-      context.fillRect(0, 0, w, h);
-      let itemList = (this.currentArea || {}).ExhibitionItemList;
-
-      let src = `/Kiosoft.Serial.Web.Api/upload/${
-          this.currentArea.BackgroundImageFile ||
-          "data/img/bg/f674783460294be1b16b1c9f7c7fd1bd.png"
-        }`,
-        vm = this;
-      let img = new Image();
-      img.onerror = () => vm.$alert(`加载底图失败 ${src}`);
-      img.src = src;
-      console.log(img.src);
-      context.drawImage(img, 0, 0, 694, 478);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      let area = this.currentArea || {};
+      let itemList = area.ExhibitionItemList;
+      canvas.style = "background:rgba(255,255,255,0);";
+      if (area.BackgroundImageFile) {
+        let src = `/Kiosoft.Serial.Web.Api/upload/${area.BackgroundImageFile}`,
+          vm = this;
+        let img = new Image();
+        img.onerror = () => vm.$alert(`加载底图失败 ${src}`);
+        img.src = src;
+        console.log(img.src);
+        context.drawImage(img, 0, 0, 694, 478);
+      }
 
       if (itemList) {
         let { width, height } = this.getCanvas();
         for (let i in itemList) {
-          let { Name, Text, X, Y } = itemList[i];
-          let x = X * width;
-          let y = Y * height;
-          if (e) {
-            let distance = this.calcOneDistance({ e, x, y });
-            let text = `${Text} (${distance})`;
-            this.fillText({ text, x, y });
-          } else {
-            this.fillText({ text: Name, x: x, y: y });
+          const item = itemList[i];
+          if (item && item.Id) {
+            console.log(JSON.stringify(item));
+            let { Name, Text, X, Y } = item;
+            let x = X * width;
+            let y = Y * height;
+            if (e) {
+              let distance = this.calcOneDistance({ e, x, y });
+              let text = `${Text || Name} (${distance})`;
+              this.fillText({ text, x, y });
+            } else {
+              this.fillText({ text: Name || Text, x: x, y: y });
+            }
           }
         }
       }
@@ -348,20 +360,20 @@ export default {
       }
     },
     fillText: function ({ text, x, y, fillStyle, font }) {
-      let { width, height } = this.getCanvas();
-      // console.log("fillText", {text, x, y, fillStyle, font}, {width, height})
-      let ctx = this.getContext();
-      ctx.fillStyle = fillStyle || "blue";
-      ctx.font = font || "14px serif";
-      ctx.fillText(text || "Hello world", x || 10, y || 50);
+      if (text) {
+        let { width, height } = this.getCanvas();
+        // console.log("fillText", {text, x, y, fillStyle, font}, {width, height})
+        let ctx = this.getContext();
+        ctx.fillStyle = fillStyle || "blue";
+        ctx.font = font || "14px serif";
+        ctx.fillText(text || "", x || 10, y || 50);
+      }
     },
     onmessage({ ws, args }) {
-      console.log(`onmessage ${this}`, args.data);
       this.$success(JSON.stringify(args.data, undefined, 4));
     },
     onopen({ ws, args }) {
-      ws.send(`(+ 1 1 1)`);
-      this.$success(args.data);
+      // ws.send({InstructionContent:`(+ 1 1 1)`});
     },
     async reload() {
       this.startWebSocket();
@@ -512,14 +524,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
-canvas {
+.rightPanel {
   position: fixed;
   top: 56px;
   left: 160px;
-  margin: 0;
-  padding: 0;
   width: 694px;
   height: 478px;
+}
+canvas {
+  margin: 0;
+  padding: 0;
 }
 
 /* 单选框 */
@@ -563,9 +577,11 @@ canvas {
 
 .left-btn-group {
   width: 30%;
-  height: 100%;
-  margin-top: 10px;
-  overflow-y: scroll;
+  /* height: 103%; */
+  margin-top: 0;
+  /* overflow-y: scroll; */
+  position: relative;
+  top: 22px;
 }
 
 @width: 160px;
@@ -573,15 +589,23 @@ canvas {
 @margin: 15px;
 
 .btn-left {
+  width: @width;
+  height: 129px;
   .btn-icon {
+    position: relative;
+    top: 0;
+    left: 0;
     width: @width;
     height: 140px;
     text-align: center;
-    padding-top: 90px;
+    padding-top: 75px;
+    color: white;
+    z-index: 999999;
+    width: @width;
+    height: 140px;
     background-size: 40px 40px;
     background-position: 60px 35px;
     background-repeat: no-repeat;
-    color: white;
   }
 
   .btn-icon-1 {
@@ -598,19 +622,25 @@ canvas {
 }
 
 .btn-w-icon-border {
+  z-index: 0;
   position: relative;
-  top: -95px;
+  top: -127px;
   left: 27px;
   border: rgb(61, 174, 250) 1px solid !important;
   border-radius: 10px;
   transform: rotate(60deg);
   width: @width*0.65;
   height: @height*0.65;
-}
-
-.btn2 {
-}
-
-.btn3 {
+  &.active {
+    border: rgb(61, 174, 250) 1px dashed !important;
+    .inner {
+      background-color: #203a5ec4;
+      position: relative;
+      border-radius: 10px;
+      width: @width*0.56;
+      height: @height*0.56;
+      margin: 6px;
+    }
+  }
 }
 </style>

@@ -30,7 +30,6 @@ function $success(msg) {
   let variant = 'success';
   messageShow.call(this, variant, msg);
   this.$emit(variant, msg);
-  console.log(`toast: ${msg}`)
 }
 
 Array.prototype.$set = function () {
@@ -110,9 +109,11 @@ import {host, $get, $post, $postPaging, $processResult, $getData, $postData,} fr
 
 function extensions(Vue, options) {
   Vue.prototype.wsObserverList = [];
+  Vue.prototype.onopen = ({ ws, args })=> console.log(`onopen ${args}`);
+  Vue.prototype.onmessage = ({ ws, args })=> console.log(`onmessage ${args}`);
+  Vue.prototype.onclose = ({ ws, args })=> console.log(`onclose ${args}`);
   Vue.prototype.startWebSocket = function () {
     let vue = this;
-
     function fire(webSocket, fn_name) {
       if (!fn_name) throw Error("方法名为空");
       if (!webSocket) throw Error("WebSocket对象为空");
@@ -125,14 +126,14 @@ function extensions(Vue, options) {
           if (fn_name && observer && observer[fn_name]) {
             observer[fn_name]({ws, args});
           } else {
-            throw Error(`observer对象错误 ${typeof (observer)}`);
+            console.error(`未绑定方法 ${typeof (observer)}[${fn_name}]`);
           }
         }
       }
     }
 
     vue.wsObserverList = [...new Set([vue, ...vue.wsObserverList])];
-    const ws = new WebSocket("ws://192.168.5.164:8181");
+    const ws = new WebSocket("ws://192.168.5.158:8181");
     ws.onopen = fire(ws, "onopen");
     ws.onmessage = fire(ws, "onmessage");
     ws.onclose = fire(ws, "onclose");
