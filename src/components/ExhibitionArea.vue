@@ -360,10 +360,7 @@ export default {
       this.$success(JSON.stringify(args.data, undefined, 4));
     },
     onopen({ ws, args }) {
-      ws.send(`on open ${this} ${JSON.stringify(args)}`);
-      /*
-              setInterval(() =>
-                this.ws.send("展现界面准备完毕"), 1000)*/
+      ws.send(`(+ 1 1 1)`);
       this.$success(args.data);
     },
     async reload() {
