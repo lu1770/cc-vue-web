@@ -2,16 +2,16 @@
   <div>
     <b-navbar toggleable="lg" type="dark" variant="dark">
       <b-link to="/nav/Home" class="back-button">
-        <b-button letiant="default">返回</b-button>
+        <b-button variant="dark"><</b-button>
       </b-link>
       <b-navbar-nav class="ml-auto">
-        <b-button v-b-modal.areaSelection variant="primary">{{
+        <b-button v-b-modal.areaSelection variant="dark">{{
           areaName
         }}</b-button>
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
         <b-link to="/nav/Settings" class="settings-button">
-          <b-button letiant="primary">设置</b-button>
+          <b-button variant="dark">设置</b-button>
         </b-link>
       </b-navbar-nav>
     </b-navbar>

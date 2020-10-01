@@ -26,6 +26,7 @@
             @click="switch_tab('投影仪')"
             class="btn3 btn-left"
             v-for="i in 5"
+            v-bind:key="i"
           >
             <div class="btn-icon btn-icon-3">投影仪</div>
             <div
@@ -78,7 +79,7 @@
             </b-card>
           </div>
         </div>
-        <div class="dialog" v-if="showLeft && currentItem">
+        <div class="dialog" v-if="showLeft && currentItem" hide-footer>
           <b-button
             class="close-dialog"
             @click="showLeft = false"
@@ -147,6 +148,7 @@ export default {
       currentArea: null,
       currentItem: null,
       areaListOptions: [],
+      img: new Image(),
     };
   },
   computed: {
@@ -275,30 +277,33 @@ export default {
     },
     paint(e) {
       let canvas = this.getCanvas();
+      let { width, height } = canvas;
+      let rate = 0.9;
+      let w = width * rate;
+      let h = height * rate;
       let context = this.getContext();
       context.clearRect(0, 0, canvas.width, canvas.height);
       let area = this.currentArea || {};
       let itemList = area.ExhibitionItemList;
       canvas.style = "background:rgba(255,255,255,0);";
       if (area.BackgroundImageFile) {
-        let src = `/Kiosoft.Serial.Web.Api/upload/${area.BackgroundImageFile}`,
-          vm = this;
-        let img = new Image();
-        img.onerror = () => vm.$alert(`加载底图失败 ${src}`);
-        img.src = src;
-        console.log(img.src);
-        context.drawImage(img, 0, 0, 694, 478);
+        let src = `/Kiosoft.Serial.Web.Api/upload/${area.BackgroundImageFile}`;
+        let vm = this;
+        this.img = this.img || new Image();
+        this.img.onerror = () => vm.$alert(`加载底图失败 ${src}`);
+        this.img.src = src;
+        console.log(this.img.src);
+        context.drawImage(this.img, 0, 0, w, h);
       }
 
       if (itemList) {
-        let { width, height } = this.getCanvas();
         for (let i in itemList) {
           const item = itemList[i];
           if (item && item.Id) {
             console.log(JSON.stringify(item));
             let { Name, Text, X, Y } = item;
-            let x = X * width;
-            let y = Y * height;
+            let x = X * w;
+            let y = Y * h;
             if (e) {
               let distance = this.calcOneDistance({ e, x, y });
               let text = `${Text || Name} (${distance})`;
@@ -364,7 +369,7 @@ export default {
         let { width, height } = this.getCanvas();
         // console.log("fillText", {text, x, y, fillStyle, font}, {width, height})
         let ctx = this.getContext();
-        ctx.fillStyle = fillStyle || "blue";
+        ctx.fillStyle = fillStyle || "white";
         ctx.font = font || "14px serif";
         ctx.fillText(text || "", x || 10, y || 50);
       }
@@ -505,15 +510,12 @@ export default {
           text: "序厅",
         },
       ];
-      this.currentArea =
-        this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
+      this.currentArea = this.areaListOptions[0].value;
 
       // 网络获取
       this.areaListOptions = await this.$getData(
         "/GetExhibitionAreaDropDownList"
       );
-      this.currentArea =
-        this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
       this.paint();
     },
   },
@@ -576,10 +578,11 @@ canvas {
 }
 
 .left-btn-group {
+  padding-top: 10px;
   width: 30%;
-  /* height: 103%; */
+  height: 400px;
   margin-top: 0;
-  /* overflow-y: scroll; */
+  overflow-y: scroll;
   position: relative;
   top: 22px;
 }
