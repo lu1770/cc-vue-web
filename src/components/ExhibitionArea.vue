@@ -70,15 +70,19 @@
           <div v-show="selected === '灯控'">
             <div class="control-group" v-for="row in illuminationControlButtonList">
               <label for="">{{ row.Name }}</label>
-              <b-button @click="exec({ device, cmd: row.Button1.Script })">{{ row.Button1.Name }}</b-button>
-              <b-button @click="exec({ device, cmd: row.Button2.Script })">{{ row.Button2.Name }}</b-button>
+              <b-button-group>
+                <b-button @click="exec({ device, cmd: row.Button1.Script })">{{ row.Button1.Name }}</b-button>
+                <b-button @click="exec({ device, cmd: row.Button2.Script })">{{ row.Button2.Name }}</b-button>
+              </b-button-group>
             </div>
           </div>
           <div v-show="selected === '强电'">
             <div class="control-group" v-for="row in strongCurrentControlButtonList">
               <label for="">{{ row.Name }}</label>
-              <b-button @click="exec({ device, cmd: row.Button1.Script })">{{ row.Button1.Name }}</b-button>
-              <b-button @click="exec({ device, cmd: row.Button2.Script })">{{ row.Button2.Name }}</b-button>
+              <b-button-group>
+                <b-button @click="exec({ device, cmd: row.Button1.Script })">{{ row.Button1.Name }}</b-button>
+                <b-button @click="exec({ device, cmd: row.Button2.Script })">{{ row.Button2.Name }}</b-button>
+              </b-button-group>
             </div>
           </div>
           <div v-show="isDeviceListTab" xs9>
