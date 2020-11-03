@@ -1,6 +1,6 @@
 <template>
   <div class="main-page">
-    <TopBar v-model="currentArea" />
+    <TopBar v-model="currentArea"/>
     <div>
       <div>
         <div class="left-btn-group">
@@ -18,6 +18,24 @@
             <div
               class="btn-w-icon-border"
               :class="selected === '主机' ? 'active' : ''"
+            >
+              <div class="inner"></div>
+            </div>
+          </div>
+          <div @click="switch_tab('灯控')" class="btn2 btn-left">
+            <div class="btn-icon btn-icon-2">灯控</div>
+            <div
+              class="btn-w-icon-border"
+              :class="selected === '灯控' ? 'active' : ''"
+            >
+              <div class="inner"></div>
+            </div>
+          </div>
+          <div @click="switch_tab('强电')" class="btn2 btn-left">
+            <div class="btn-icon btn-icon-2">强电</div>
+            <div
+              class="btn-w-icon-border"
+              :class="selected === '强电' ? 'active' : ''"
             >
               <div class="inner"></div>
             </div>
@@ -49,34 +67,32 @@
             >
             </canvas>
           </div>
+          <div v-show="selected === '灯控'">
+            <div class="control-group" v-for="row in illuminationControlButtonList">
+              <label for="">{{ row.Name }}</label>
+              <b-button @click="exec({ device, cmd: row.Button1.Script })">{{ row.Button1.Name }}</b-button>
+              <b-button @click="exec({ device, cmd: row.Button2.Script })">{{ row.Button2.Name }}</b-button>
+            </div>
+          </div>
+          <div v-show="selected === '强电'">
+            <div class="control-group" v-for="row in strongCurrentControlButtonList">
+              <label for="">{{ row.Name }}</label>
+              <b-button @click="exec({ device, cmd: row.Button1.Script })">{{ row.Button1.Name }}</b-button>
+              <b-button @click="exec({ device, cmd: row.Button2.Script })">{{ row.Button2.Name }}</b-button>
+            </div>
+          </div>
           <div v-show="isDeviceListTab" xs9>
-            <b-card>
-              <b-table
-                striped
-                hover
-                :items="deviceList"
-                :fields="[
-                  { key: 'Name', label: '设备名称' },
-                  { key: 'HardwareInstructionList', label: '指令列表' },
-                ]"
+            <div v-for="device in deviceList" :key="device.Id">
+              {{ device.Name }}
+              <b-button
+                v-for="instruction in device.HardwareInstructionList"
+                @click="exec({ device, cmd: instruction })"
+                variant="primary"
+                :key="instruction.Id"
               >
-                <template v-slot:cell(HardwareInstructionList)="data">
-                  <template v-if="data.item.HardwareInstructionList">
-                    <div
-                      v-for="instruction in data.item.HardwareInstructionList"
-                      v-bind:key="instruction.Id"
-                    >
-                      <b-button
-                        @click="exec({ device, cmd: instruction })"
-                        variant="primary"
-                      >
-                        {{ instruction.InstructionName }}
-                      </b-button>
-                    </div>
-                  </template>
-                </template>
-              </b-table>
-            </b-card>
+                {{ instruction.InstructionName }}
+              </b-button>
+            </div>
           </div>
         </div>
         <div class="dialog" v-if="showLeft && currentItem" hide-footer>
@@ -84,7 +100,8 @@
             class="close-dialog"
             @click="showLeft = false"
             variant="outline-primary"
-            >X</b-button
+          >X
+          </b-button
           >
           <div>
             <div>
@@ -92,10 +109,12 @@
             </div>
             <b-button-group>
               <b-button variant="success" @click="$alert('未实现')"
-                >展项开</b-button
+              >展项开
+              </b-button
               >
               <b-button variant="danger" @click="$alert('未实现')"
-                >展项关</b-button
+              >展项关
+              </b-button
               >
             </b-button-group>
             <div>
@@ -133,7 +152,7 @@ import TopBar from "./TopBar";
 
 export default {
   name: "ExhibitionArea",
-  components: { TopBar },
+  components: {TopBar},
   props: {
     tab: {
       type: String,
@@ -148,12 +167,12 @@ export default {
       currentArea: null,
       currentItem: null,
       areaListOptions: [],
-      img: new Image(),
+      img: new Image(), illuminationControlButtonList: [], strongCurrentControlButtonList: []
     };
   },
   computed: {
     isDeviceListTab() {
-      let { selected } = this;
+      let {selected} = this;
       return selected === "主机" || selected === "投影仪";
     },
     document() {
@@ -177,7 +196,7 @@ export default {
           "NetworkDeviceComputers",
           "NetworkDeviceProjectors",
         ].map((k) =>
-          vm.areaListOptions.map(({ value }) =>
+          vm.areaListOptions.map(({value}) =>
             ((value || {}).ExhibitionItemList || []).map((item) => item[k])
           )
         )
@@ -196,7 +215,8 @@ export default {
   },
   watch: {
     selected: {
-      handler() {},
+      handler() {
+      },
     },
     currentArea: {
       async handler(neo) {
@@ -214,11 +234,14 @@ export default {
       this.selected = chs;
       this.showLeft = false;
     },
-    async exec({ device, cmd }) {
-      console.log({ device, cmd });
+    async exec({cmd}) {
       // let { result } = await this.$postData("/Execute", cmd);
       // this.$success(result);
-      this.ws.send(JSON.stringify(cmd));
+      if (typeof cmd === "string") {
+        this.ws.send(cmd);
+      } else {
+        this.ws.send(JSON.stringify(cmd));
+      }
     },
     getCanvas() {
       return this.$refs.panel;
@@ -233,18 +256,18 @@ export default {
       this.down = true;
       this.showLeft = this;
       this.paint(e);
-      let { width, height } = this.getCanvas();
+      let {width, height} = this.getCanvas();
       let lowestDistance = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
       let lowest = null;
       let itemList = (this.currentArea || {}).ExhibitionItemList;
       if (itemList) {
         for (let i in itemList) {
           let item = itemList[i];
-          let { Name, X, Y } = item;
+          let {Name, X, Y} = item;
           let x = X * width;
           let y = Y * height;
           if (e) {
-            let distance = this.calcOneDistance({ e, x, y });
+            let distance = this.calcOneDistance({e, x, y});
             if (distance < lowestDistance) {
               lowestDistance = distance;
               lowest = item;
@@ -263,21 +286,21 @@ export default {
       canvas.strokeStyle = "rgba(0, 0, 200, 0.5)";
       canvas.strokeRect(x, y, 8, 4);
     },
-    calcDistance: function ({ x, mouseX, y, mouseY }) {
+    calcDistance: function ({x, mouseX, y, mouseY}) {
       return Math.round(
         Math.sqrt(Math.pow(x - mouseX, 2) + Math.pow(y - mouseY, 2)),
         2
       );
     },
-    calcOneDistance: function ({ e, x, y }) {
-      let { offsetX, offsetY } = e;
+    calcOneDistance: function ({e, x, y}) {
+      let {offsetX, offsetY} = e;
       let mouseX = offsetX,
         mouseY = offsetY;
-      return this.calcDistance({ x, mouseX, y, mouseY });
+      return this.calcDistance({x, mouseX, y, mouseY});
     },
     paint(e) {
       let canvas = this.getCanvas();
-      let { width, height } = canvas;
+      let {width, height} = canvas;
       let rate = 0.9;
       let w = width * rate;
       let h = height * rate;
@@ -292,7 +315,6 @@ export default {
         this.img = this.img || new Image();
         this.img.onerror = () => vm.$alert(`加载底图失败 ${src}`);
         this.img.src = src;
-        console.log(this.img.src);
         context.drawImage(this.img, 0, 0, w, h);
       }
 
@@ -300,16 +322,15 @@ export default {
         for (let i in itemList) {
           const item = itemList[i];
           if (item && item.Id) {
-            console.log(JSON.stringify(item));
-            let { Name, Text, X, Y } = item;
+            let {Name, Text, X, Y} = item;
             let x = X * w;
             let y = Y * h;
             if (e) {
-              let distance = this.calcOneDistance({ e, x, y });
+              let distance = this.calcOneDistance({e, x, y});
               let text = `${Text || Name} (${distance})`;
-              this.fillText({ text, x, y });
+              this.fillText({text, x, y});
             } else {
-              this.fillText({ text: Name || Text, x: x, y: y });
+              this.fillText({text: Name || Text, x: x, y: y});
             }
           }
         }
@@ -364,24 +385,38 @@ export default {
         }
       }
     },
-    fillText: function ({ text, x, y, fillStyle, font }) {
+    fillText: function ({text, x, y, fillStyle, font}) {
       if (text) {
-        let { width, height } = this.getCanvas();
-        // console.log("fillText", {text, x, y, fillStyle, font}, {width, height})
+        let {width, height} = this.getCanvas();
         let ctx = this.getContext();
         ctx.fillStyle = fillStyle || "white";
         ctx.font = font || "14px serif";
         ctx.fillText(text || "", x || 10, y || 50);
       }
     },
-    onmessage({ ws, args }) {
+    onmessage({ws, args}) {
       this.$success(JSON.stringify(args.data, undefined, 4));
     },
-    onopen({ ws, args }) {
+    onopen({ws, args}) {
       // ws.send({InstructionContent:`(+ 1 1 1)`});
+    },
+    onclose({ws, args}) {
+      this.startWebSocket();
+    },
+    async getIlluminationControlButtonList() {
+      let [err, resp] = await this.$get('/GetIlluminationControlButtonList');
+      let {data} = resp
+      this.illuminationControlButtonList = data;
+    },
+    async getStrongCurrentControlButtonList() {
+      let [err, resp] = await this.$get('/GetStrongCurrentControlButtonList');
+      let {data} = resp
+      this.strongCurrentControlButtonList = data;
     },
     async reload() {
       this.startWebSocket();
+      this.getIlluminationControlButtonList();
+      this.getStrongCurrentControlButtonList();
       // this.smile();
       // this.doubleTriangles();
       // this.cycles();
@@ -511,7 +546,6 @@ export default {
         },
       ];
       this.currentArea = this.areaListOptions[0].value;
-
       // 网络获取
       this.areaListOptions = await this.$getData(
         "/GetExhibitionAreaDropDownList"
@@ -533,6 +567,7 @@ export default {
   width: 694px;
   height: 478px;
 }
+
 canvas {
   margin: 0;
   padding: 0;
@@ -594,6 +629,7 @@ canvas {
 .btn-left {
   width: @width;
   height: 129px;
+
   .btn-icon {
     position: relative;
     top: 0;
@@ -634,8 +670,10 @@ canvas {
   transform: rotate(60deg);
   width: @width*0.65;
   height: @height*0.65;
+
   &.active {
     border: rgb(61, 174, 250) 1px dashed !important;
+
     .inner {
       background-color: #203a5ec4;
       position: relative;

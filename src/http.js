@@ -5,12 +5,12 @@ let VueResource = require('vue-resource');
 Vue.use(VueResource);
 let host = "";
 if (process.env.NODE_ENV === 'production') {
-  host = "/Kiosoft.Serial.Web.Api"
+  host = ""
 } else {
-  host = "http://192.168.5.164/Kiosoft.Serial.Web.Api"
+  host = "http://localhost"
 }
-host = "/Kiosoft.Serial.Web.Api"
-host += '';
+host += "/Kiosoft.Serial.Web.Api"
+
 function init() {
   // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
   // axios.defaults.headers.post['Authorization'] = `Bearer ${localStorage['token']}`;

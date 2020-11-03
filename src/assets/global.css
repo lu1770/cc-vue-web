@@ -1,6 +1,8 @@
 body {
+  overflow-y: hidden;
   width: 854px;
   height: 534px;
+  color: #eeeeee;
 }
 .app {
   background: url("../assets/images/背景.png") no-repeat 0 0;

@@ -126,7 +126,7 @@ function extensions(Vue, options) {
           if (fn_name && observer && observer[fn_name]) {
             observer[fn_name]({ws, args});
           } else {
-            console.error(`未绑定方法 ${typeof (observer)}[${fn_name}]`);
+            console.warn(`未绑定方法 ${typeof (observer)}[${fn_name}]`);
           }
         }
       }
