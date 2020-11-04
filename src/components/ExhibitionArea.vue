@@ -6,82 +6,59 @@
         <div class="left-btn-group">
           <div @click="switch_tab('展项')" class="btn1 btn-left">
             <div class="btn-icon btn-icon-1">展项</div>
-            <div
-              class="btn-w-icon-border"
-              :class="selected === '展项' ? 'active' : ''"
-            >
+            <div class="btn-w-icon-border" :class="selected === '展项' ? 'active' : ''">
               <div class="inner"></div>
             </div>
           </div>
           <div @click="switch_tab('主机')" class="btn2 btn-left">
             <div class="btn-icon btn-icon-2">主机</div>
-            <div
-              class="btn-w-icon-border"
-              :class="selected === '主机' ? 'active' : ''"
-            >
+            <div class="btn-w-icon-border" :class="selected === '主机' ? 'active' : ''">
               <div class="inner"></div>
             </div>
           </div>
           <div @click="switch_tab('灯控')" class="btn2 btn-left">
             <div class="btn-icon btn-icon-2">灯控</div>
-            <div
-              class="btn-w-icon-border"
-              :class="selected === '灯控' ? 'active' : ''"
-            >
+            <div class="btn-w-icon-border" :class="selected === '灯控' ? 'active' : ''">
               <div class="inner"></div>
             </div>
           </div>
           <div @click="switch_tab('强电')" class="btn2 btn-left">
             <div class="btn-icon btn-icon-2">强电</div>
-            <div
-              class="btn-w-icon-border"
-              :class="selected === '强电' ? 'active' : ''"
-            >
+            <div class="btn-w-icon-border" :class="selected === '强电' ? 'active' : ''">
               <div class="inner"></div>
             </div>
           </div>
-          <div
-            @click="switch_tab('投影仪')"
-            class="btn3 btn-left"
-            v-for="i in 5"
-            v-bind:key="i"
-          >
+          <div @click="switch_tab('投影仪')" class="btn3 btn-left" v-for="i in 5" v-bind:key="i">
             <div class="btn-icon btn-icon-3">投影仪</div>
-            <div
-              class="btn-w-icon-border"
-              :class="selected === '投影仪' ? 'active' : ''"
-            >
+            <div class="btn-w-icon-border" :class="selected === '投影仪' ? 'active' : ''">
               <div class="inner"></div>
             </div>
           </div>
         </div>
         <div class="rightPanel">
           <div v-show="selected === '展项'">
-            <canvas
-              ref="panel"
-              width="694"
-              height="478"
-              @mousedown="mouseDown"
-              @mousemove="mouseMove"
-              @mouseup="mouseUp"
-            >
-            </canvas>
+            <canvas ref="panel" width="694" height="478" @mousedown="mouseDown" @mousemove="mouseMove"
+                    @mouseup="mouseUp"></canvas>
           </div>
           <div v-show="selected === '灯控'">
             <div class="control-group" v-for="row in illuminationControlButtonList">
-              <label for="">{{ row.Name }}</label>
+              <div class="control-group-title">{{ row.Name }}</div>
               <b-button-group>
-                <b-button @click="exec({ device, cmd: row.Button1.Script })">{{ row.Button1.Name }}</b-button>
-                <b-button @click="exec({ device, cmd: row.Button2.Script })">{{ row.Button2.Name }}</b-button>
+                <b-button @click="exec({ device, cmd: row.Button1.Script })" variant="success"
+                          v-html="row.Button1.Name"></b-button>
+                <b-button @click="exec({ device, cmd: row.Button2.Script })" variant="danger"
+                          v-html="row.Button2.Name"></b-button>
               </b-button-group>
             </div>
           </div>
           <div v-show="selected === '强电'">
             <div class="control-group" v-for="row in strongCurrentControlButtonList">
-              <label for="">{{ row.Name }}</label>
+              <div class="control-group-title">{{ row.Name }}</div>
               <b-button-group>
-                <b-button @click="exec({ device, cmd: row.Button1.Script })">{{ row.Button1.Name }}</b-button>
-                <b-button @click="exec({ device, cmd: row.Button2.Script })">{{ row.Button2.Name }}</b-button>
+                <b-button @click="exec({ device, cmd: row.Button1.Script })" variant="success"
+                          v-html="row.Button1.Name"></b-button>
+                <b-button @click="exec({ device, cmd: row.Button2.Script })" variant="danger"
+                          v-html="row.Button2.Name"></b-button>
               </b-button-group>
             </div>
           </div>
@@ -686,6 +663,24 @@ canvas {
       height: @height*0.56;
       margin: 6px;
     }
+  }
+}
+
+
+.control-group {
+  border: #e2e2e2 1px solid;
+  border-radius: 10px;
+  float: left;
+  padding: 10px;
+  margin: 10px;
+
+  .control-group-title {
+    margin: 5px;
+    text-align: center;
+  }
+
+  .btn-group {
+    margin: auto;
   }
 }
 </style>
