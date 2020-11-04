@@ -4,7 +4,7 @@
 
 const path = require('path')
 
-let wwwroot = 'D:\\code\\SerialTest\\Kiosoft.Serial.Web.Api\\Content';
+let wwwroot = 'wwwroot';
 
 module.exports = {
   dev: {
