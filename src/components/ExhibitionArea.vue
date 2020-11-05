@@ -291,7 +291,7 @@ export default {
       let itemList = area.ExhibitionItemList;
       canvas.style = "background:rgba(255,255,255,0);";
       if (area.BackgroundImageFile) {
-        let src = `/Kiosoft.Serial.Web.Api/upload/${area.BackgroundImageFile}`;
+        let src = `/upload/${area.BackgroundImageFile}`;
         let vm = this;
         this.img = this.img || new Image();
         this.img.onerror = () => vm.$alert(`加载底图失败 ${src}`);

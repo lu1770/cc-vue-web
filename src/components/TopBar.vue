@@ -64,7 +64,7 @@ export default {
       this.currentArea || ((this.areaListOptions || [])[0] || {}).value;
     this.areaListOptions.forEach(({ value }) => {
       let img = new Image();
-      img.src = `/Kiosoft.Serial.Web.Api/upload/${value.BackgroundImageFile}`;
+      img.src = `/upload/${value.BackgroundImageFile}`;
     });
   },
 };
