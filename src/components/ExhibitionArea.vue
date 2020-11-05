@@ -16,6 +16,12 @@
               <div class="inner"></div>
             </div>
           </div>
+          <div @click="switch_tab('投影仪')" class="btn3 btn-left">
+            <div class="btn-icon btn-icon-3">投影仪</div>
+            <div class="btn-w-icon-border" :class="selected === '投影仪' ? 'active' : ''">
+              <div class="inner"></div>
+            </div>
+          </div>
           <div @click="switch_tab('灯控')" class="btn2 btn-left">
             <div class="btn-icon btn-icon-2">灯控</div>
             <div class="btn-w-icon-border" :class="selected === '灯控' ? 'active' : ''">
@@ -25,12 +31,6 @@
           <div @click="switch_tab('强电')" class="btn2 btn-left">
             <div class="btn-icon btn-icon-2">强电</div>
             <div class="btn-w-icon-border" :class="selected === '强电' ? 'active' : ''">
-              <div class="inner"></div>
-            </div>
-          </div>
-          <div @click="switch_tab('投影仪')" class="btn3 btn-left" v-for="i in 5" v-bind:key="i">
-            <div class="btn-icon btn-icon-3">投影仪</div>
-            <div class="btn-w-icon-border" :class="selected === '投影仪' ? 'active' : ''">
               <div class="inner"></div>
             </div>
           </div>

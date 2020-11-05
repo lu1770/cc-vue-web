@@ -28,7 +28,6 @@ async function $getData(url, data) {
 async function $get(url, data) {
   init();
   let uri = url;
-  console.log(`$get(${uri},${JSON.stringify(data)})`);
   if (uri && uri.indexOf(host) === -1) uri = host + uri;
   let result = await axios.get(uri, {
     params: data,
