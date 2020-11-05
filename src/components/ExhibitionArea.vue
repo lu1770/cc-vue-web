@@ -293,7 +293,7 @@ export default {
         let vm = this;
         this.img = this.img || new Image();
         this.img.onerror = () => vm.$alert(`加载底图失败 ${src}`);
-        this.img.src = src;
+        if (!this.img.src) this.img.src = src;
         context.drawImage(this.img, 0, 0, w, h);
       }
 
