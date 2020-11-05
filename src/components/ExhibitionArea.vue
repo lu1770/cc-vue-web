@@ -63,16 +63,14 @@
             </div>
           </div>
           <div v-show="isDeviceListTab" xs9>
-            <div v-for="device in deviceList" :key="device.Id">
-              {{ device.Name }}
-              <b-button
-                v-for="instruction in device.HardwareInstructionList"
-                @click="exec({ device, cmd: instruction })"
-                variant="primary"
-                :key="instruction.Id"
-              >
-                {{ instruction.InstructionName }}
-              </b-button>
+            <div v-for="device in deviceList" :key="device.Id" class="control-group">
+              <div class="control-group-title">{{ device.Name }}</div>
+              <b-button-group>
+                <b-button v-for="instruction in device.HardwareInstructionList"
+                          @click="exec({ device, cmd: instruction })" variant="primary" :key="instruction.Id"
+                          v-html="instruction.InstructionName"
+                ></b-button>
+              </b-button-group>
             </div>
           </div>
         </div>
