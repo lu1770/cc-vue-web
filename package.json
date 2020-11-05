@@ -11,7 +11,8 @@
     "e2e": "node test/e2e/runner.js",
     "start": "npm run dev",
     "test": "npm run unit && npm run e2e",
-    "unit": "jest --config test/unit/jest.conf.js --coverage"
+    "unit": "jest --config test/unit/jest.conf.js --coverage",
+    "xcopy": "yarn build && xcopy /i /s /y wwwroot D:\\code\\SerialTest\\Kiosoft.Serial.Web.Api"
   },
   "main": ".eslintrc.js",
   "dependencies": {

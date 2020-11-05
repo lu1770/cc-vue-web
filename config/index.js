@@ -4,7 +4,7 @@
 
 const path = require('path')
 
-let wwwroot = 'wwwroot';
+let wwwroot = '../wwwroot';
 
 module.exports = {
   dev: {
@@ -52,7 +52,7 @@ module.exports = {
     // assetsRoot: path.resolve(__dirname, '../dist'),
     assetsRoot: path.resolve(__dirname, wwwroot),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/Kiosoft.Serial.Web.Api/Content/',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps
