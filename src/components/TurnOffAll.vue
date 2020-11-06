@@ -7,9 +7,12 @@
 </template>
 
 <script>
-    export default {
-        name: "TurnOffAll"
-    }
+export default {
+  name: "TurnOffAll",
+  mounted() {
+    this.noImplementation();
+  }
+}
 </script>
 
 <style scoped>

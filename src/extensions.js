@@ -109,11 +109,17 @@ import {host, $get, $post, $postPaging, $processResult, $getData, $postData,} fr
 
 function extensions(Vue, options) {
   Vue.prototype.wsObserverList = [];
-  Vue.prototype.onopen = ({ ws, args })=> console.log(`onopen ${args}`);
-  Vue.prototype.onmessage = ({ ws, args })=> console.log(`onmessage ${args}`);
-  Vue.prototype.onclose = ({ ws, args })=> console.log(`onclose ${args}`);
+  Vue.prototype.noImplementation = function () {
+    let vm = this;
+    vm.$alert('此功能建设中')
+    setTimeout(()=>vm.$router.back(), 2000)
+  }
+  Vue.prototype.onopen = ({ws, args}) => console.log(`onopen ${args}`);
+  Vue.prototype.onmessage = ({ws, args}) => console.log(`onmessage ${args}`);
+  Vue.prototype.onclose = ({ws, args}) => console.log(`onclose ${args}`);
   Vue.prototype.startWebSocket = function () {
     let vue = this;
+
     function fire(webSocket, fn_name) {
       if (!fn_name) throw Error("方法名为空");
       if (!webSocket) throw Error("WebSocket对象为空");

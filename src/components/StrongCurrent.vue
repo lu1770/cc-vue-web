@@ -1,11 +1,14 @@
 <template>
-    <h1>StrongCurrent</h1>
+  <h1>StrongCurrent</h1>
 </template>
 
 <script>
-    export default {
-        name: "StrongCurrent"
-    }
+export default {
+  name: "StrongCurrent",
+  mounted() {
+    this.noImplementation();
+  }
+}
 </script>
 
 <style scoped>

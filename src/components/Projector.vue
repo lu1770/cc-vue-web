@@ -1,11 +1,14 @@
 <template>
-    <h1>Projector</h1>
+  <h1>Projector</h1>
 </template>
 
 <script>
-    export default {
-        name: "Projector"
-    }
+export default {
+  name: "Projector",
+  mounted() {
+    this.noImplementation();
+  }
+}
 </script>
 
 <style scoped>

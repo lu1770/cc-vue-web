@@ -1,11 +1,14 @@
 <template>
-    <h1>LampControl</h1>
+  <h1>LampControl</h1>
 </template>
 
 <script>
-    export default {
-        name: "LampControl"
-    }
+export default {
+  name: "LampControl",
+  mounted() {
+    this.noImplementation();
+  }
+}
 </script>
 
 <style scoped>

@@ -1,12 +1,15 @@
 <template>
 
-    <h1>ExtendedFunction</h1>
+  <h1>ExtendedFunction</h1>
 </template>
 
 <script>
-    export default {
-        name: "ExtendedFunction"
-    }
+export default {
+  name: "ExtendedFunction",
+  mounted() {
+    this.noImplementation();
+  }
+}
 </script>
 
 <style scoped>
